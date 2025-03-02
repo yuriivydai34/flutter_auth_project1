@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +22,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
   Future<void> fetchArticles() async {
     final response = await http.get(
       Uri.parse('${dotenv.get('baseUrl')}/articles?populate=*'),
+      headers: {HttpHeaders.authorizationHeader: 'Bearer ${dotenv.get('authToken')}'},
     );
     if (response.statusCode == 200) {
       print('Raw API Response: ${jsonEncode(response.body)}');
