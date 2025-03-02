@@ -1,15 +1,16 @@
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_auth_project1/models/user.dart';
 
 class ApiService {
-  // Getting users
-  Future<List<User>> getUsers() async {
-    var url = Uri.parse(dotenv.get('baseUrl') + dotenv.get('usersEndpoint'));
-    var response = await http.get(
-      url,
-      headers: {"Authorization": "Bearer ${dotenv.get('accessToken')}"},
+  // Post Auth Local
+  Future postAuthLocal(email, password) async {
+    var url = Uri.parse(
+      dotenv.get('baseUrl') + dotenv.get('authLocalEndpoint'),
     );
-    return userFromJson(response.body);
+    var response = await http.post(
+      url,
+      body: {"identifier": email, "password": password},
+    );
+    return response.body;
   }
 }

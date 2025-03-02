@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_project1/utils/server.dart';
 import 'package:flutter_auth_project1/models/user.dart';
@@ -16,19 +18,21 @@ class _LoginState extends State<Login> {
   String _password = "";
   String _error = "";
 
+  var accessToken;
+
   void _login() async {
-    List<User> users = (await ApiService().getUsers());
-    late User? loggedInUser;
-    if (users.isNotEmpty) {
-      print('getUsers1111');
-      for (var i = 0; i < users.length; i++) {
-        if (users[i].email == _email) {
-          print('found!!!!');
-          // navigate to the articles screen.
-          Navigator.pushNamed(context, ArticleScreen.namedRoute);
-          loggedInUser = users[i];
-          break;
-        }
+    String authLocal = await ApiService().postAuthLocal(_email, _password);
+    if (authLocal.isNotEmpty) {
+      print('authLocal: ${authLocal}');
+      final result = jsonDecode(authLocal) as Map<String, dynamic>;
+      accessToken = result['jwt'];
+      if (accessToken == null) {
+        setState(() {
+          _error = "Your account does not exist.";
+        });
+      } else {
+        print('accessToken: ${accessToken}');
+        Navigator.pushNamed(context, ArticleScreen.namedRoute);
       }
     } else {
       print('empty!!!');

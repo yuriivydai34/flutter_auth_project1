@@ -28,7 +28,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
     final response = await http.get(
       Uri.parse('${dotenv.get('baseUrl')}/articles'),
       headers: {
-        HttpHeaders.authorizationHeader: 'Bearer ${dotenv.get('accessToken')}',
+        HttpHeaders.authorizationHeader: 'Bearer accessToken',
       },
     );
     if (response.statusCode == 200) {
