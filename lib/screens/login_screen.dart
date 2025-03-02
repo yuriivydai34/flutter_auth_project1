@@ -18,6 +18,7 @@ class _LoginState extends State<Login> {
 
   void _login() async {
     List<User> users = (await ApiService().getUsers());
+    late User? loggedInUser;
     if (users.isNotEmpty) {
       print('getUsers1111');
       for (var i = 0; i < users.length; i++) {
@@ -25,6 +26,8 @@ class _LoginState extends State<Login> {
           print('found!!!!');
           // navigate to the articles screen.
           Navigator.pushNamed(context, ArticleScreen.namedRoute);
+          loggedInUser = users[i];
+          break;
         }
       }
     } else {
