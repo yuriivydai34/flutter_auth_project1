@@ -1,11 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_project1/screens/login_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ArticleScreen extends StatefulWidget {
+  static String namedRoute = 'articles-screen';
+
+  const ArticleScreen({super.key});
+
   @override
   _ArticleScreenState createState() => _ArticleScreenState();
 }
@@ -21,9 +26,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
 
   Future<void> fetchArticles() async {
     final response = await http.get(
-      Uri.parse('${dotenv.get('baseUrl')}/articles?populate=*'),
+      Uri.parse('${dotenv.get('baseUrl')}/articles'),
       headers: {
-        HttpHeaders.authorizationHeader: 'Bearer ${dotenv.get('authToken')}',
+        HttpHeaders.authorizationHeader: 'Bearer ${dotenv.get('accessToken')}',
       },
     );
     if (response.statusCode == 200) {
@@ -76,13 +81,15 @@ class _ArticleScreenState extends State<ArticleScreen> {
               },
             ),
           ),
-          TextButton(onPressed: _login(), child: Text('Login')),
+          TextButton(
+            onPressed: () {
+              print('object!!!1111');
+              Navigator.pushNamed(context, Login.namedRoute);
+            },
+            child: Text('Login'),
+          ),
         ],
       ),
     );
-  }
-  
-  _login() {
-    print('Login!!!!');
   }
 }
