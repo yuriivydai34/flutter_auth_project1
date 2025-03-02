@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_project1/utils/server.dart';
-import 'package:flutter_auth_project1/models/user.dart';
 import 'package:flutter_auth_project1/screens/article_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Login extends StatefulWidget {
   static const namedRoute = "login-screen";
@@ -20,6 +20,8 @@ class _LoginState extends State<Login> {
 
   var accessToken;
 
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
   void _login() async {
     String authLocal = await ApiService().postAuthLocal(_email, _password);
     if (authLocal.isNotEmpty) {
@@ -32,6 +34,7 @@ class _LoginState extends State<Login> {
         });
       } else {
         print('accessToken: ${accessToken}');
+        await _storage.write(key: 'accessToken', value: accessToken);
         Navigator.pushNamed(context, ArticleScreen.namedRoute);
       }
     } else {
