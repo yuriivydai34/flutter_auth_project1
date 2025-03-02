@@ -22,7 +22,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
   Future<void> fetchArticles() async {
     final response = await http.get(
       Uri.parse('${dotenv.get('baseUrl')}/articles?populate=*'),
-      headers: {HttpHeaders.authorizationHeader: 'Bearer ${dotenv.get('authToken')}'},
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer ${dotenv.get('authToken')}',
+      },
     );
     if (response.statusCode == 200) {
       print('Raw API Response: ${jsonEncode(response.body)}');
@@ -36,40 +38,51 @@ class _ArticleScreenState extends State<ArticleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Strapi + Flutter')),
-      body: ListView.builder(
-        itemCount: articles.length,
-        itemBuilder: (context, index) {
-          var article = articles[index];
-          debugPrint(article.toString());
-          return Card(
-            margin: EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // if (article['image'] != null)
-                Image.network('${article['image']}'),
-                Padding(
-                  padding: EdgeInsets.all(10),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: articles.length,
+              itemBuilder: (context, index) {
+                var article = articles[index];
+                debugPrint(article.toString());
+                return Card(
+                  margin: EdgeInsets.all(10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        article['title'],
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      // if (article['image'] != null)
+                      Image.network('${article['image']}'),
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              article['title'],
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Text(article['description']),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 5),
-                      Text(article['description']),
                     ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
-          );
-        },
+          ),
+          TextButton(onPressed: _login(), child: Text('Login')),
+        ],
       ),
     );
+  }
+  
+  _login() {
+    print('Login!!!!');
   }
 }
