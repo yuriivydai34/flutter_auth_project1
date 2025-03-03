@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_auth_project1/models/article.dart';
+import 'package:flutter_auth_project1/utils/server.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class ArticleScreen extends StatefulWidget {
   static String namedRoute = 'articles-screen';
@@ -16,29 +13,28 @@ class ArticleScreen extends StatefulWidget {
 }
 
 class _ArticleScreenState extends State<ArticleScreen> {
-  List articles = [];
+  List<Article> _articles = [];
+  String _error = "";
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   @override
   void initState() {
     super.initState();
-    fetchArticles();
+    _getData();
   }
 
-  Future<void> fetchArticles() async {
-    var accessToken = await _storage.read(key: 'accessToken');
-    final response = await http.get(
-      Uri.parse('${dotenv.get('baseUrl')}/articles'),
-      headers: {
-        HttpHeaders.authorizationHeader: 'Bearer ${accessToken}',
-      },
-    );
-    if (response.statusCode == 200) {
-      print('Raw API Response: ${jsonEncode(response.body)}');
-      setState(() {
-        articles = jsonDecode(response.body)['data'];
-      });
+  void _getData() async {
+    try {
+      _articles = await ApiService().getArticles();
+      Future.delayed(const Duration(seconds: 1)).then(
+        (value) => setState(() {
+          _articles = _articles;
+          _error = "";
+        }),
+      );
+    } on Exception catch (e) {
+      _error = e.toString();
     }
   }
 
@@ -50,31 +46,30 @@ class _ArticleScreenState extends State<ArticleScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: articles.length,
+              itemCount: _articles.length,
               itemBuilder: (context, index) {
-                var article = articles[index];
-                debugPrint(article.toString());
+                var article = _articles[index];
                 return Card(
                   margin: EdgeInsets.all(10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // if (article['image'] != null)
-                      Image.network('${article['image']}'),
+                      // if (article.image != null)
+                      Image.network(article.image),
                       Padding(
                         padding: EdgeInsets.all(10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              article['title'],
+                              article.title,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             SizedBox(height: 5),
-                            Text(article['description']),
+                            Text(article.description),
                           ],
                         ),
                       ),
