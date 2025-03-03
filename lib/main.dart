@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_project1/screens/article_screen.dart';
 import 'package:flutter_auth_project1/screens/login_screen.dart';
+import 'package:flutter_auth_project1/screens/signup_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
@@ -18,6 +19,7 @@ class _HomeState extends State<Home> {
       routes: {
         ArticleScreen.namedRoute: (ctx) => const ArticleScreen(),
         Login.namedRoute: (ctx) => const Login(),
+        Signup.namedRoute: (ctx) => const Signup(),
       },
       onGenerateRoute: (settings) {
         return MaterialPageRoute(builder: (context) => const ArticleScreen());

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_auth_project1/screens/login_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +28,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
 
   Future<void> fetchArticles() async {
     var accessToken = await _storage.read(key: 'accessToken');
-    print('_storage.read>>> ${accessToken}');
     final response = await http.get(
       Uri.parse('${dotenv.get('baseUrl')}/articles'),
       headers: {
@@ -85,13 +83,6 @@ class _ArticleScreenState extends State<ArticleScreen> {
                 );
               },
             ),
-          ),
-          TextButton(
-            onPressed: () {
-              print('object!!!1111');
-              Navigator.pushNamed(context, Login.namedRoute);
-            },
-            child: Text('Login'),
           ),
         ],
       ),

@@ -1,46 +1,45 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_auth_project1/screens/signup_screen.dart';
+import 'package:flutter_auth_project1/screens/login_screen.dart';
+import 'package:flutter_auth_project1/models/user.dart';
 import 'package:flutter_auth_project1/utils/server.dart';
 import 'package:flutter_auth_project1/screens/article_screen.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class Login extends StatefulWidget {
-  static const namedRoute = "login-screen";
-  const Login({Key? key}) : super(key: key);
+class Signup extends StatefulWidget {
+  static const namedRoute = "signup-screen";
+  const Signup({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Signup> createState() => _SignupState();
 }
 
-class _LoginState extends State<Login> {
+class _SignupState extends State<Signup> {
+  String _username = "";
   String _email = "";
   String _password = "";
   String _error = "";
 
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
-
-  void _login() async {
-    String authLocal = await ApiService().postAuthLocal(_email, _password);
-    if (authLocal.isNotEmpty) {
-      final result = jsonDecode(authLocal) as Map<String, dynamic>;
-      var accessToken = result['jwt'];
-      if (accessToken == null) {
-        setState(() {
-          _error = "Your account does not exist.";
-        });
-      } else {
-        await _storage.write(key: 'accessToken', value: accessToken);
+  void _signup() async {
+    try {
+      User? createduser = await ApiService().addUser(
+        _email,
+        _username,
+        _password,
+      );
+      if (createduser != null) {
+        // navigate to the dashboard.
         Navigator.pushNamed(context, ArticleScreen.namedRoute);
       }
+    } on Exception catch (e) {
+      setState(() {
+        _error = e.toString().substring(11);
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Create Account')),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -63,6 +62,23 @@ class _LoginState extends State<Login> {
                   const SizedBox(height: 10),
                 ],
               ),
+            Padding(
+              //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    _username = value;
+                  });
+                },
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Username',
+                  hintText: 'Enter valid username e.g. Paul',
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
             Padding(
               //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
               padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -101,35 +117,36 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 15),
             Container(
               height: 50,
-              width: 250,
+              width: 180,
               decoration: BoxDecoration(
                 color: Colors.blue,
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(20),
               ),
               // ignore: deprecated_member_use
               child: TextButton(
-                onPressed: () => _login(),
+                onPressed: () => _signup(),
                 child: const Text(
-                  'Login',
+                  'Create Account',
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
             ),
-            const SizedBox(height: 130),
+            const SizedBox(height: 30),
+            // ignore: deprecated_member_use
             TextButton(
               onPressed: () {
                 // navigate to the signup screen
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => Signup()),
+                  MaterialPageRoute(builder: (_) => Login()),
                 );
               },
               child: const Text(
-                'New user? Create Account',
-                style: TextStyle(fontSize: 14),
+                'Already have an account? Login',
+                style: TextStyle(fontSize: 16),
               ),
             ),
           ],
