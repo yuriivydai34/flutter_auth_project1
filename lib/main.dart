@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_auth_project1/screens/article_screen.dart';
 import 'package:flutter_auth_project1/screens/login_screen.dart';
 import 'package:flutter_auth_project1/screens/signup_screen.dart';
+import 'package:flutter_auth_project1/utils/socket.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
@@ -11,6 +12,12 @@ void main() async {
 }
 
 class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    initSocket();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
